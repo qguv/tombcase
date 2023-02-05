@@ -49,7 +49,7 @@ module case(
     extra_base = 0
 ) {
     inner_width = play + width + play;
-    inner_height = play + height + play;
+    inner_height = height;
     inner_depth = play + depth + play;
     inner_border_radius = play + border_radius;
 
@@ -122,8 +122,7 @@ module dia10() {
         depth = 4.8,
         border_radius = 5,
         wall = 1.25,
-        play = 0.5,
-        extra_base = 4.8
+        play = 0.5
     );
 }
 
