@@ -113,10 +113,22 @@ module aleve12() {
     );
 }
 
+module dia10() {
+    case(
+        width = 35,
+        height = 86,
+        depth = 4.8,
+        border_radius = 5,
+        wall = 1.25,
+        play = 0.5
+    );
+}
+
 module all() {
     rotate([0, 0, 180]) {
         aleve6();
         translate([60, 0, 0]) aleve12();
+        translate([120, 0, 0]) dia10();
     }
 }
 
