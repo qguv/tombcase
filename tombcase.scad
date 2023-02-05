@@ -6,7 +6,7 @@ depth = 4;
 border_radius = 5;
 
 play = 0.5;
-wall = 1;
+wall = 1.5;
 tolerance = 0.2;
 fudge = 0.01;
 
@@ -58,6 +58,15 @@ module case() {
             border_radius + wall + fudge,
             fudge + wall + play + depth + play + wall + fudge
         ]);
+
+        translate([
+            (wall + play + width + play + wall) / 2,
+            0,
+            -fudge
+        ]) cylinder(
+            h=fudge + wall + play + depth + play + wall + fudge,
+            d=(wall + play + width + play + wall) / 4
+        );
     }
 }
 
