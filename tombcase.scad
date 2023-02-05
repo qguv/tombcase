@@ -94,7 +94,18 @@ module case(
 module aleve6() {
     case(
         width = 52,
-        height = 53, // 106
+        height = 53,
+        depth = 4,
+        border_radius = 5,
+        wall = 1.25,
+        play = 0.5
+    );
+}
+
+module aleve12() {
+    case(
+        width = 52,
+        height = 106,
         depth = 4,
         border_radius = 5,
         wall = 1.25,
@@ -105,6 +116,7 @@ module aleve6() {
 module all() {
     rotate([0, 0, 180]) {
         aleve6();
+        translate([60, 0, 0]) aleve12();
     }
 }
 
