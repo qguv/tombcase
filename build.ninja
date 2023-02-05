@@ -1,0 +1,9 @@
+rule render3d
+    command = openscad -o $out $in
+
+rule render2d
+    command = openscad --colorscheme 'Tomorrow Night' --render -o $out $in
+
+build tombcase.png: render2d tombcase.scad
+build tombcase.stl: render3d tombcase.scad
+build tombcase.3mf: render3d tombcase.scad

@@ -1,0 +1,154 @@
+name: render
+on: push
+jobs:
+  render:
+    runs-on: ubuntu-22.04
+    steps:
+
+      - name: download ninja binary
+        run: curl -LO https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-linux.zip
+
+      - name: extract ninja binary
+        run: unzip ninja-linux.zip
+
+      - name: install ninja
+        run: sudo install ninja /usr/local/bin/
+
+      - name: update system
+        run: sudo apt-get update
+
+      - name: install openscad
+        run: sudo apt-get install -y --no-install-recommends openscad xvfb
+
+      - uses: actions/checkout@v2
+
+      - name: render 3mf
+        run: ninja tombcase.3mf
+
+      - name: add commit hash to 3mf filename
+        run: mv tombcase.3mf tombcase_${{ github.sha }}.3mf
+
+      - name: upload 3mf
+        uses: actions/upload-artifact@v2
+        with:
+          name: tombcase_${{ github.sha }}.3mf
+          path: tombcase_${{ github.sha }}.3mf
+
+      - name: render stl
+        run: ninja tombcase.stl
+
+      - name: add commit hash to stl filename
+        run: mv tombcase.stl tombcase_${{ github.sha }}.stl
+
+      - name: upload stl
+        uses: actions/upload-artifact@v2
+        with:
+          name: tombcase_${{ github.sha }}.stl
+          path: tombcase_${{ github.sha }}.stl
+
+      - name: render png
+        uses: coactions/setup-xvfb@v1
+        with:
+          run: ninja tombcase.png
+
+      - name: add commit hash to png filename
+        run: mv tombcase.png tombcase_${{ github.sha }}.png
+
+      - name: upload png
+        uses: actions/upload-artifact@v2
+        with:
+          name: tombcase_${{ github.sha }}.png
+          path: tombcase_${{ github.sha }}.png
+
+  github-release:
+    needs: render
+    runs-on: ubuntu-22.04
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+
+      - name: calculate new version
+        uses: frabert/replace-string-action@v1.1
+        with:
+          string: ${{ github.ref }}
+          pattern: 'refs/tags/v'
+          replace-with: ''
+        id: version
+
+      - name: download 3mf
+        uses: actions/download-artifact@v2
+        with:
+          name: tombcase_${{ github.sha }}.3mf
+
+      - name: download stl
+        uses: actions/download-artifact@v2
+        with:
+          name: tombcase_${{ github.sha }}.stl
+
+      - name: create github release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          body: |
+            ![2d render](https://qguv.github.io/tombcase/img/tombcase_${{ steps.version.outputs.replaced }}.png)
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ steps.version.outputs.replaced }}
+          draft: true
+          prerelease: ${{ startsWith(github.ref, 'refs/tags/v0.') }}
+        id: create_release
+
+      - name: upload 3mf as a release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: tombcase_${{ github.sha }}.3mf
+          asset_name: tombcase_${{ steps.version.outputs.replaced }}.3mf
+          asset_content_type: application/octet-stream
+
+      - name: upload stl as a release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: tombcase_${{ github.sha }}.stl
+          asset_name: tombcase_${{ steps.version.outputs.replaced }}.stl
+          asset_content_type: application/octet-stream
+
+  gh-pages-release:
+    needs: render
+    runs-on: ubuntu-22.04
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+
+      - name: calculate new version
+        uses: frabert/replace-string-action@v1.1
+        with:
+          string: ${{ github.ref }}
+          pattern: 'refs/tags/v'
+          replace-with: ''
+        id: version
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: tombcase_${{ github.sha }}.png
+
+      - name: upload rendered image
+        run: |
+          mkdir -p gh-pages/img
+          cp tombcase_${{ github.sha }}.png gh-pages/img/tombcase.png
+          cp tombcase_${{ github.sha }}.png gh-pages/img/tombcase_${{ steps.version.outputs.replaced }}.png
+
+      - name: deploy to github pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: gh-pages/
+          keep_files: true
+          enable_jekyll: false
