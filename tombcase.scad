@@ -3,7 +3,7 @@ $fn=100;
 //tolerance = 0.2;
 fudge = 0.01;
 
-module tombstone(x, y, z, r) {
+module tombstone(x, y, z, r, extra_base=0) {
     hull() {
 
         // bottom left rounded corner
@@ -12,7 +12,7 @@ module tombstone(x, y, z, r) {
             r,
             0
         ]) cylinder(
-            h=z,
+            h=z + extra_base,
             r=r
         );
 
@@ -22,7 +22,7 @@ module tombstone(x, y, z, r) {
             r,
             0
         ]) cylinder(
-            h=z,
+            h=z + extra_base,
             r=r
         );
 
@@ -45,7 +45,8 @@ module case(
     depth,
     border_radius,
     wall,
-    play
+    play,
+    extra_base = 0
 ) {
     inner_width = play + width + play;
     inner_height = play + height + play;
@@ -64,7 +65,8 @@ module case(
             outer_width,
             outer_height,
             outer_depth,
-            outer_border_radius
+            outer_border_radius,
+            extra_base=extra_base
         );
 
         // inner
@@ -85,7 +87,7 @@ module case(
             0,
             -fudge
         ]) cylinder(
-            h=fudge + outer_depth + fudge,
+            h=fudge + outer_depth + extra_base + fudge,
             d=outer_width / 4
         );
     }
@@ -120,7 +122,8 @@ module dia10() {
         depth = 4.8,
         border_radius = 5,
         wall = 1.25,
-        play = 0.5
+        play = 0.5,
+        extra_base = 4.8
     );
 }
 
