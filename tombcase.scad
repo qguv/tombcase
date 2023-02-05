@@ -94,9 +94,9 @@ module case(
 
 module aleve(height) {
     case(
-        width = 52,
+        width = 52.7,
         height = height,
-        depth = 4,
+        depth = 5.2,
         border_radius = 5,
         wall = 1.25
     );
@@ -112,8 +112,8 @@ module aleve12() {
 
 module dia10() {
     case(
-        width = 35,
-        height = 86,
+        width = 35.0,
+        height = 85.8,
         depth = 4.8,
         border_radius = 5,
         wall = 1.25
