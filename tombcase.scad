@@ -1,6 +1,6 @@
 $fn=100;
 
-//tolerance = 0.2;
+tolerance = 0.15;
 fudge = 0.01;
 
 module tombstone(x, y, z, r, extra_base=0) {
@@ -45,13 +45,12 @@ module case(
     depth,
     border_radius,
     wall,
-    play,
     extra_base = 0
 ) {
-    inner_width = play + width + play;
+    inner_width = tolerance + width + tolerance;
     inner_height = height;
-    inner_depth = play + depth + play;
-    inner_border_radius = play + border_radius;
+    inner_depth = tolerance + depth + tolerance;
+    inner_border_radius = tolerance + border_radius;
 
     outer_width = wall + inner_width + wall;
     outer_height = wall + inner_height;
@@ -99,8 +98,7 @@ module aleve6() {
         height = 53,
         depth = 4,
         border_radius = 5,
-        wall = 1.25,
-        play = 0.5
+        wall = 1.25
     );
 }
 
@@ -110,8 +108,7 @@ module aleve12() {
         height = 106,
         depth = 4,
         border_radius = 5,
-        wall = 1.25,
-        play = 0.5
+        wall = 1.25
     );
 }
 
@@ -121,8 +118,7 @@ module dia10() {
         height = 86,
         depth = 4.8,
         border_radius = 5,
-        wall = 1.25,
-        play = 0.5
+        wall = 1.25
     );
 }
 
