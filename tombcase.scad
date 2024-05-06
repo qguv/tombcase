@@ -92,7 +92,7 @@ module case(
     }
 }
 
-module aleve(height) {
+module _aleve(height) {
     case(
         width = 52.7,
         height = height,
@@ -103,11 +103,11 @@ module aleve(height) {
 }
 
 module aleve6() {
-    aleve(53);
+    _aleve(53);
 }
 
 module aleve12() {
-    aleve(106);
+    _aleve(106);
 }
 
 module dia10() {
