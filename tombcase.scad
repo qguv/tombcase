@@ -120,11 +120,37 @@ module dia10() {
     );
 }
 
+module dex10() {
+    case(
+        width = 34.7,
+        height = 84.2,
+        depth = 4.6,
+        border_radius = 5,
+        wall = 1.25
+    );
+}
+
+// count in [2, 4, 6, 8, 10]
+module etos_nap(count) {
+    edge_pairs = (count == 10) ? 2 : 1;
+    middle_pairs = floor(count / 2) - edge_pairs;
+    case(
+        width = 41.0,
+        height = edge_pairs * 22.5 + middle_pairs * 21.5,
+        depth = 6.3,
+        border_radius = 5,
+        wall = 1.25
+    );
+}
+
 module all() {
     rotate([0, 0, 180]) {
-        aleve6();
-        translate([60, 0, 0]) aleve12();
-        translate([120, 0, 0]) dia10();
+        translate([60*0, 0, 0]) aleve6();
+        translate([60*1, 0, 0]) aleve12();
+        translate([60*2, 0, 0]) dia10();
+        translate([60*3, 0, 0]) dex10();
+        translate([60*4, 0, 0]) etos_nap(4);
+        translate([60*5, 0, 0]) etos_nap(10);
     }
 }
 
